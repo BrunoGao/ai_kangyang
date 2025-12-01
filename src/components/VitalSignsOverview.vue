@@ -20,40 +20,55 @@
       </div>
     </div>
 
-    <!-- 体征卡片网格 -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-      <VitalCard
-        icon="❤️"
-        title="平均心率"
-        :value="averageHeartRate"
-        unit="bpm"
-        trend="stable"
-        color="red"
-      />
-      <VitalCard
-        icon="🫁"
-        title="平均血氧"
-        :value="averageBloodOxygen"
-        unit="%"
-        trend="up"
-        color="blue"
-      />
-      <VitalCard
-        icon="🌡️"
-        title="平均体温"
-        :value="averageTemperature"
-        unit="°C"
-        trend="stable"
-        color="orange"
-      />
-      <VitalCard
-        icon="😴"
-        title="平均睡眠"
-        :value="averageSleep"
-        unit="小时"
-        trend="up"
-        color="purple"
-      />
+    <!-- 体征卡片网格 - 紧凑设计 -->
+    <div class="grid grid-cols-2 gap-3 mb-4">
+      <div class="bg-healing-light-gray/50 rounded-xl p-3">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-sm text-gray-600">❤️ 平均心率</span>
+          <span class="text-xs px-2 py-0.5 rounded-full bg-healing-green/20 text-healing-green">↗ +2</span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <span class="text-2xl font-bold text-healing-primary">{{ averageHeartRate }}</span>
+          <span class="text-sm text-gray-500">bpm</span>
+        </div>
+        <div class="text-xs text-gray-400 mt-1">昨日: {{ averageHeartRate - 2 }}</div>
+      </div>
+
+      <div class="bg-healing-light-gray/50 rounded-xl p-3">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-sm text-gray-600">🫁 平均血氧</span>
+          <span class="text-xs px-2 py-0.5 rounded-full bg-healing-green/20 text-healing-green">→ 0</span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <span class="text-2xl font-bold text-healing-blue">{{ averageBloodOxygen }}</span>
+          <span class="text-sm text-gray-500">%</span>
+        </div>
+        <div class="text-xs text-gray-400 mt-1">昨日: {{ averageBloodOxygen }}</div>
+      </div>
+
+      <div class="bg-healing-light-gray/50 rounded-xl p-3">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-sm text-gray-600">🌡️ 平均体温</span>
+          <span class="text-xs px-2 py-0.5 rounded-full bg-healing-orange/20 text-healing-orange">↗ +0.2</span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <span class="text-2xl font-bold text-healing-orange">{{ averageTemperature }}</span>
+          <span class="text-sm text-gray-500">°C</span>
+        </div>
+        <div class="text-xs text-gray-400 mt-1">昨日: {{ (averageTemperature - 0.2).toFixed(1) }}</div>
+      </div>
+
+      <div class="bg-healing-light-gray/50 rounded-xl p-3">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-sm text-gray-600">😴 平均睡眠</span>
+          <span class="text-xs px-2 py-0.5 rounded-full bg-healing-green/20 text-healing-green">↗ +0.5</span>
+        </div>
+        <div class="flex items-baseline gap-2">
+          <span class="text-2xl font-bold text-purple-600">{{ averageSleep }}</span>
+          <span class="text-sm text-gray-500">h</span>
+        </div>
+        <div class="text-xs text-gray-400 mt-1">昨日: {{ (averageSleep - 0.5).toFixed(1) }}</div>
+      </div>
     </div>
 
     <!-- 设备状态 -->

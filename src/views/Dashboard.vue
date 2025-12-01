@@ -4,26 +4,38 @@
     <HeaderBar :statistics="statistics" :weather="weather" />
 
     <!-- 主内容区域 -->
-    <div class="grid grid-cols-12 gap-6 mt-6">
-      <!-- 左侧：风险老人列表 -->
-      <div class="col-span-12 lg:col-span-3">
-        <RiskElderlyList :elderlyList="sortedElderlyList" :alerts="activeAlerts" />
+    <div class="grid grid-cols-12 gap-4 mt-6">
+      <!-- 左侧：风险老人列表（紧凑） -->
+      <div class="col-span-12 lg:col-span-3 xl:col-span-2">
+        <RiskElderlyList
+          :elderlyList="sortedElderlyList"
+          :alerts="activeAlerts"
+          @select-elderly="handleSelectElderly"
+        />
       </div>
 
-      <!-- 中间：楼层地图 -->
-      <div class="col-span-12 lg:col-span-6">
-        <FloorMap :elderlyList="elderlyList" :floorMap="floorMap" />
+      <!-- 中间：健康趋势监控核心图（扩大） -->
+      <div class="col-span-12 lg:col-span-6 xl:col-span-7">
+        <HealthTrendChart
+          :elderlyList="elderlyList"
+          :selectedElderly="selectedElderly"
+        />
       </div>
 
       <!-- 右侧：AI健康洞察 -->
       <div class="col-span-12 lg:col-span-3">
-        <AIInsights :insights="aiInsights" />
+        <AIInsights :insights="aiInsights" :alerts="activeAlerts" />
       </div>
     </div>
 
-    <!-- 底部：体征数据概览 -->
-    <div class="mt-6">
-      <VitalSignsOverview :elderlyList="elderlyList" />
+    <!-- 底部：体征数据概览 + 楼层热力图 -->
+    <div class="grid grid-cols-12 gap-4 mt-4">
+      <div class="col-span-12 lg:col-span-8">
+        <FloorMap :elderlyList="elderlyList" :floorMap="floorMap" />
+      </div>
+      <div class="col-span-12 lg:col-span-4">
+        <VitalSignsOverview :elderlyList="elderlyList" />
+      </div>
     </div>
 
     <!-- 告警浮层 -->
@@ -39,6 +51,7 @@ import FloorMap from '@/components/FloorMap.vue'
 import AIInsights from '@/components/AIInsights.vue'
 import VitalSignsOverview from '@/components/VitalSignsOverview.vue'
 import AlertNotifications from '@/components/AlertNotifications.vue'
+import HealthTrendChart from '@/components/HealthTrendChart.vue'
 import {
   elderlyList as initialElderlyList,
   alerts as initialAlerts,
@@ -56,6 +69,7 @@ const aiInsights = ref([...initialAiInsights])
 const floorMap = ref(initialFloorMap)
 const statistics = ref({ ...initialStatistics })
 const weather = ref({ ...initialWeather })
+const selectedElderly = ref(null)
 
 // 计算属性：按风险排序的老人列表
 const sortedElderlyList = computed(() => {
@@ -79,6 +93,11 @@ const dismissAlert = (alertId) => {
   if (alert) {
     alert.status = 'dismissed'
   }
+}
+
+// 选择老人
+const handleSelectElderly = (elderly) => {
+  selectedElderly.value = elderly
 }
 
 // 模拟实时数据更新

@@ -23,55 +23,55 @@
       <div
         v-for="elderly in elderlyList"
         :key="elderly.id"
-        class="elderly-card p-4 rounded-xl cursor-pointer transition-soft"
+        class="elderly-card p-3 rounded-xl cursor-pointer transition-soft"
         :class="getCardClass(elderly.status)"
-        @click="navigateToDetail(elderly.id)"
+        @click="handleCardClick(elderly)"
       >
-        <!-- 头部信息 -->
-        <div class="flex items-start gap-3 mb-3">
-          <div class="avatar text-4xl">{{ elderly.avatar }}</div>
-          <div class="flex-1">
-            <div class="flex items-center gap-2 mb-1">
-              <h3 class="text-lg font-bold">{{ elderly.name }}</h3>
-              <span class="text-sm text-gray-500">{{ elderly.age }}岁</span>
-              <div
-                class="status-indicator"
-                :class="`status-${elderly.status}`"
-              ></div>
+        <!-- 紧凑头部信息 -->
+        <div class="flex items-center gap-2 mb-2">
+          <div class="avatar text-2xl">{{ elderly.avatar }}</div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2">
+              <h3 class="text-base font-bold truncate">{{ elderly.name }}</h3>
+              <span class="text-xs text-gray-500">{{ elderly.age }}岁</span>
             </div>
-            <div class="text-sm text-gray-500">
-              {{ elderly.floor }}楼 {{ elderly.room }}房间
+            <div class="text-xs text-gray-500">
+              {{ elderly.floor }}楼{{ elderly.room }} {{ elderly.mood }}
             </div>
           </div>
-          <div class="text-right">
-            <div class="text-2xl mb-1">{{ elderly.mood }}</div>
-            <div class="health-score" :class="getScoreClass(elderly.healthScore)">
+          <div class="text-right flex-shrink-0">
+            <div
+              class="status-badge px-2 py-0.5 rounded text-xs font-bold"
+              :class="getStatusBadgeClass(elderly.status)"
+            >
+              {{ getStatusLabel(elderly.status) }}
+            </div>
+            <div class="health-score text-lg font-bold mt-1" :class="getScoreClass(elderly.healthScore)">
               {{ elderly.healthScore }}
             </div>
           </div>
         </div>
 
-        <!-- 体征数据 -->
-        <div class="vital-signs grid grid-cols-2 gap-2 text-sm">
-          <div class="flex items-center gap-2 bg-healing-light-gray rounded-lg px-3 py-2">
+        <!-- 紧凑体征数据 -->
+        <div class="vital-signs flex items-center justify-between text-xs mb-2">
+          <div class="flex items-center gap-1">
             <span>❤️</span>
-            <span class="text-gray-600">心率</span>
-            <span class="font-semibold ml-auto">{{ getVitalSign(elderly, 'heartRate') }} bpm</span>
+            <span class="font-semibold">{{ getVitalSign(elderly, 'heartRate') }}</span>
           </div>
-          <div class="flex items-center gap-2 bg-healing-light-gray rounded-lg px-3 py-2">
+          <div class="flex items-center gap-1">
             <span>🫁</span>
-            <span class="text-gray-600">血氧</span>
-            <span class="font-semibold ml-auto">{{ getVitalSign(elderly, 'bloodOxygen') }}%</span>
+            <span class="font-semibold">{{ getVitalSign(elderly, 'bloodOxygen') }}%</span>
           </div>
-          <div class="flex items-center gap-2 bg-healing-light-gray rounded-lg px-3 py-2">
+          <div class="flex items-center gap-1">
             <span>🌡️</span>
-            <span class="text-gray-600">体温</span>
-            <span class="font-semibold ml-auto">{{ getVitalSign(elderly, 'temperature') }}°C</span>
+            <span class="font-semibold">{{ getVitalSign(elderly, 'temperature') }}°</span>
           </div>
-          <div class="flex items-center gap-2 bg-healing-light-gray rounded-lg px-3 py-2">
+          <div class="flex items-center gap-1">
             <span>😴</span>
-            <span class="text-gray-600">睡眠</span>
-            <span class="font-semibold ml-auto">{{ getVitalSign(elderly, 'sleep') }}h</span>
+            <span class="font-semibold">{{ getVitalSign(elderly, 'sleep') }}h</span>
+          </div>
+          <div class="text-healing-primary">
+            {{ getTrend(elderly) }}
           </div>
         </div>
 
@@ -111,7 +111,14 @@ const props = defineProps({
   }
 })
 
+const emit = defineEmits(['select-elderly'])
+
 const router = useRouter()
+
+const handleCardClick = (elderly) => {
+  // 双击进入详情页，单击选中
+  emit('select-elderly', elderly)
+}
 
 const navigateToDetail = (id) => {
   router.push(`/elderly/${id}`)
@@ -127,9 +134,27 @@ const getCardClass = (status) => {
 }
 
 const getScoreClass = (score) => {
-  if (score >= 80) return 'text-healing-green font-bold text-lg'
-  if (score >= 60) return 'text-healing-orange font-bold text-lg'
-  return 'text-healing-red font-bold text-lg'
+  if (score >= 80) return 'text-healing-green'
+  if (score >= 60) return 'text-healing-orange'
+  return 'text-healing-red'
+}
+
+const getStatusBadgeClass = (status) => {
+  const classes = {
+    danger: 'bg-healing-red text-white',
+    warning: 'bg-healing-orange text-white',
+    normal: 'bg-healing-green text-white'
+  }
+  return classes[status] || classes.normal
+}
+
+const getStatusLabel = (status) => {
+  const labels = {
+    danger: '高危',
+    warning: '关注',
+    normal: '正常'
+  }
+  return labels[status] || '正常'
 }
 
 const getVitalSign = (elderly, type) => {
@@ -145,6 +170,13 @@ const getVitalSign = (elderly, type) => {
 
 const getElderlyAlerts = (elderlyId) => {
   return props.alerts.filter(a => a.elderlyId === elderlyId)
+}
+
+const getTrend = (elderly) => {
+  // 模拟趋势：根据健康评分返回趋势
+  if (elderly.healthScore > 80) return '↗'
+  if (elderly.healthScore < 60) return '↘'
+  return '→'
 }
 
 const formatTime = (timestamp) => {

@@ -3,11 +3,33 @@
     <div class="flex items-center justify-between mb-4">
       <h2 class="text-xl font-bold text-healing-gray flex items-center gap-2">
         <span>🤖</span>
-        <span>AI健康洞察</span>
+        <span>AI决策中心</span>
       </h2>
       <div class="text-xs text-gray-500 flex items-center gap-1">
         <span class="w-2 h-2 bg-healing-green rounded-full animate-pulse"></span>
         <span>实时分析</span>
+      </div>
+    </div>
+
+    <!-- 活跃告警时间线 -->
+    <div v-if="alerts.length > 0" class="mb-4 p-3 bg-healing-red/10 border border-healing-red/30 rounded-xl">
+      <div class="text-sm font-semibold text-healing-red mb-2 flex items-center justify-between">
+        <span>🚨 活跃告警事件</span>
+        <span class="text-xs">{{ alerts.length }} 条</span>
+      </div>
+      <div class="space-y-2 max-h-32 overflow-y-auto">
+        <div
+          v-for="alert in alerts.slice(0, 3)"
+          :key="alert.id"
+          class="text-xs flex items-start gap-2 bg-white rounded-lg p-2"
+        >
+          <div class="text-base">{{ getAlertIcon(alert.type) }}</div>
+          <div class="flex-1">
+            <div class="font-semibold text-gray-800">{{ alert.elderlyName }}</div>
+            <div class="text-gray-600">{{ alert.title }}</div>
+            <div class="text-gray-400">{{ formatTime(alert.timestamp) }}</div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -49,7 +71,7 @@
           class="mt-3 pt-3 border-t border-gray-200"
         >
           <div class="text-xs font-semibold text-gray-700 mb-2">🎯 AI建议方案：</div>
-          <ul class="space-y-1">
+          <ul class="space-y-1 mb-3">
             <li
               v-for="(rec, index) in insight.recommendations"
               :key="index"
@@ -59,6 +81,18 @@
               <span>{{ rec }}</span>
             </li>
           </ul>
+          <!-- 任务执行按钮 -->
+          <div v-if="insight.priority === 'high'" class="flex gap-2">
+            <button class="flex-1 px-3 py-1.5 bg-healing-primary text-white rounded-lg text-xs font-medium hover:bg-healing-green transition-all">
+              📞 呼叫护士
+            </button>
+            <button class="flex-1 px-3 py-1.5 bg-healing-blue text-white rounded-lg text-xs font-medium hover:opacity-90 transition-all">
+              📋 生成报告
+            </button>
+            <button class="px-3 py-1.5 bg-healing-orange text-white rounded-lg text-xs font-medium hover:opacity-90 transition-all">
+              🛏️
+            </button>
+          </div>
         </div>
 
         <!-- 时间 -->
@@ -90,6 +124,10 @@ const props = defineProps({
   insights: {
     type: Array,
     required: true
+  },
+  alerts: {
+    type: Array,
+    default: () => []
   }
 })
 
@@ -122,6 +160,15 @@ const getInsightIcon = (type) => {
     success: '✅'
   }
   return icons[type] || '💡'
+}
+
+const getAlertIcon = (type) => {
+  const icons = {
+    danger: '🚨',
+    warning: '⚠️',
+    info: 'ℹ️'
+  }
+  return icons[type] || 'ℹ️'
 }
 
 const formatTime = (timestamp) => {

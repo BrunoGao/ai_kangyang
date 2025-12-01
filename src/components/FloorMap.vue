@@ -38,69 +38,71 @@
       </button>
     </div>
 
-    <!-- 楼层房间布局 -->
-    <div class="floor-layout bg-healing-light-gray/50 rounded-2xl p-6 min-h-[500px]">
-      <div class="text-center mb-6">
-        <h3 class="text-lg font-bold text-healing-primary">{{ floorMap[currentFloor].name }}</h3>
-        <p class="text-sm text-gray-500">
-          共 {{ floorMap[currentFloor].rooms.length }} 个房间
-          · 入住 {{ getFloorOccupancy(currentFloor) }} 人
-        </p>
+    <!-- 楼层房间布局 - 热力图风格 -->
+    <div class="floor-layout bg-healing-light-gray/50 rounded-2xl p-4">
+      <div class="flex items-center justify-between mb-3">
+        <div>
+          <h3 class="text-base font-bold text-healing-primary">{{ floorMap[currentFloor].name }}</h3>
+          <p class="text-xs text-gray-500">
+            共 {{ floorMap[currentFloor].rooms.length }} 间 · {{ getFloorOccupancy(currentFloor) }} 人
+          </p>
+        </div>
+        <!-- 风险统计 -->
+        <div class="flex items-center gap-2 text-xs">
+          <div class="flex items-center gap-1">
+            <div class="w-3 h-3 rounded-full bg-healing-red"></div>
+            <span>{{ getFloorRiskCount(currentFloor, 'danger') }}</span>
+          </div>
+          <div class="flex items-center gap-1">
+            <div class="w-3 h-3 rounded-full bg-healing-orange"></div>
+            <span>{{ getFloorRiskCount(currentFloor, 'warning') }}</span>
+          </div>
+          <div class="flex items-center gap-1">
+            <div class="w-3 h-3 rounded-full bg-healing-green"></div>
+            <span>{{ getFloorRiskCount(currentFloor, 'normal') }}</span>
+          </div>
+        </div>
       </div>
 
-      <!-- 房间网格 -->
-      <div class="rooms-grid grid grid-cols-4 gap-4">
+      <!-- 房间网格 - 紧凑热力图 -->
+      <div class="rooms-grid grid grid-cols-6 gap-2">
         <div
           v-for="room in floorMap[currentFloor].rooms"
           :key="room"
-          class="room-card relative bg-white rounded-xl p-4 cursor-pointer transition-soft hover:shadow-soft-lg"
+          class="room-card relative bg-white rounded-lg p-2 cursor-pointer transition-soft hover:scale-105"
           :class="getRoomClass(room)"
           @click="handleRoomClick(room)"
         >
           <!-- 房间号 -->
-          <div class="text-center mb-2">
-            <div class="text-lg font-bold text-gray-700">{{ room }}</div>
+          <div class="text-center">
+            <div class="text-xs font-bold text-gray-700 mb-1">{{ room }}</div>
           </div>
 
-          <!-- 老人信息 -->
+          <!-- 老人信息 - 简化 -->
           <div v-if="getRoomElderly(room)" class="text-center">
-            <div class="text-3xl mb-2">{{ getRoomElderly(room).avatar }}</div>
-            <div class="text-sm font-semibold text-gray-700 mb-1">
-              {{ getRoomElderly(room).name }}
+            <div class="text-2xl mb-1">{{ getRoomElderly(room).avatar }}</div>
+            <div class="text-xs font-semibold text-gray-700 truncate">
+              {{ getRoomElderly(room).name.slice(0, 3) }}
             </div>
-            <div class="text-xs text-gray-500 mb-2">
-              {{ getRoomElderly(room).age }}岁
-            </div>
-
             <!-- 健康评分 -->
-            <div class="relative">
-              <div class="w-full bg-gray-200 rounded-full h-2 mb-1">
-                <div
-                  class="h-2 rounded-full transition-all"
-                  :class="getHealthBarClass(getRoomElderly(room).healthScore)"
-                  :style="{ width: getRoomElderly(room).healthScore + '%' }"
-                ></div>
-              </div>
-              <div class="text-xs font-semibold" :class="getHealthScoreClass(getRoomElderly(room).healthScore)">
-                {{ getRoomElderly(room).healthScore }}分
-              </div>
+            <div class="text-xs font-bold mt-1" :class="getHealthScoreClass(getRoomElderly(room).healthScore)">
+              {{ getRoomElderly(room).healthScore }}
             </div>
 
             <!-- 状态指示器 -->
             <div
               v-if="getRoomElderly(room).status !== 'normal'"
-              class="absolute top-2 right-2 w-3 h-3 rounded-full animate-pulse"
+              class="absolute top-1 right-1 w-2 h-2 rounded-full animate-pulse"
               :class="{
-                'bg-healing-orange shadow-glow-orange': getRoomElderly(room).status === 'warning',
-                'bg-healing-red shadow-glow-red': getRoomElderly(room).status === 'danger'
+                'bg-healing-orange': getRoomElderly(room).status === 'warning',
+                'bg-healing-red': getRoomElderly(room).status === 'danger'
               }"
             ></div>
           </div>
 
           <!-- 空房间 -->
-          <div v-else class="text-center text-gray-400 py-6">
-            <div class="text-3xl mb-2">🛏️</div>
-            <div class="text-xs">空房间</div>
+          <div v-else class="text-center text-gray-400 py-2">
+            <div class="text-xl">🛏️</div>
           </div>
         </div>
       </div>
@@ -206,6 +208,10 @@ const getHealthScoreClass = (score) => {
 
 const getFloorOccupancy = (floor) => {
   return props.elderlyList.filter(e => e.floor === floor).length
+}
+
+const getFloorRiskCount = (floor, status) => {
+  return props.elderlyList.filter(e => e.floor === floor && e.status === status).length
 }
 
 const handleRoomClick = (room) => {
