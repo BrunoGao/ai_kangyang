@@ -5,12 +5,14 @@
       <div class="h-full px-6 flex items-center justify-between">
         <!-- 左：品牌信息 -->
         <div class="flex items-center gap-4">
-          <div class="w-12 h-12 bg-gradient-to-br from-medical-primary to-medical-secondary rounded-xl flex items-center justify-center text-white text-2xl font-bold">
-            康
-          </div>
+          <img
+            src="@/assets/ljwx-logo.png"
+            alt="灵境万象"
+            class="h-14 w-auto object-contain"
+          />
           <div>
-            <h1 class="text-xl font-bold text-medical-text">康泰养老院</h1>
-            <p class="text-xs text-medical-text-sub">老人体征监测管理平台</p>
+            <h1 class="text-xl font-bold text-medical-text">康养老人体征管理平台</h1>
+            <p class="text-xs text-medical-text-sub">© 2024 灵境万象科技 版权所有</p>
           </div>
         </div>
 
