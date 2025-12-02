@@ -7,7 +7,19 @@ export default {
   theme: {
     extend: {
       colors: {
-        // 康养主色调
+        // 科技医疗风配色（新）
+        'medical-bg': '#F5F7FB',
+        'medical-card': '#FFFFFF',
+        'medical-card-soft': '#F0F5FA',
+        'medical-primary': '#2A8DFE',
+        'medical-secondary': '#1CC9A0',
+        'medical-warning': '#FFB74D',
+        'medical-danger': '#FF5A5A',
+        'medical-muted': '#9AA5B5',
+        'medical-border': '#E1E7F0',
+        'medical-text': '#1E293B',
+        'medical-text-sub': '#64748B',
+        // 康养风配色（兼容旧组件）
         'healing-primary': '#80C4A8',
         'healing-green': '#6EC28C',
         'healing-blue': '#7AB6E9',
